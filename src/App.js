@@ -4,10 +4,13 @@ import './App.css';
 import ConditionalR from './ConditionalR';
 import Colors from './Colors';
 import TODo from './ToDo';
+import ReduxTest from './ReduxTest';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { connect } from 'react-redux';
+import { increment } from './action';
 
-function App() {
+const App = ({count, increment}) => {
 
   const tasksArray = ['task1', 'task2', 'task3'];
   const items = ['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5'];
@@ -20,7 +23,11 @@ function App() {
     axios
     .get(url)
     .then( response =>{
-      setTaskUrl(response)});
+      setTaskUrl(response.data);
+    })
+    .catch(error => {
+      console.error("Error fetching datat:", error)
+    })
     }, []);
   
 
@@ -38,8 +45,15 @@ function App() {
           <p key={index}>{task.title}</p>
         ))}
       </header>
+      <p>Counter: {count}</p>
+      <button onClick={increment}>Increment</button>
+      <ReduxTest />
     </div>
   );
-}
+};
 
-export default App;
+const mapStateToProps = state => ({
+  count: state.count
+})
+
+export default connect(mapStateToProps, {increment})(App);
